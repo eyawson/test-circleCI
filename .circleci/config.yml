@@ -43,10 +43,12 @@ jobs:
     steps:
       # - attach_workspace:
       #     at: ~/
-      - run_yarn_install
-      - run: |
-          npm audit fix
-          npm audit
+      - run:
+          name: "Analyze this work of art"
+          command: |
+            npm install
+            npm audit fix
+            npm audit
 
 workflows:
   covid-19-ci:
