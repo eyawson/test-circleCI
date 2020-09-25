@@ -41,14 +41,10 @@ jobs:
     docker:
       - image: circleci/node:13.8.0
     steps:
+      - checkout
       # - attach_workspace:
       #     at: ~/
-      - run:
-          name: "Analyze this work of art"
-          command: |
-            npm install
-            npm audit fix
-            npm audit
+      - run: npm audit
 
 workflows:
   covid-19-ci:
