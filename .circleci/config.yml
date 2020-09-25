@@ -44,7 +44,9 @@ jobs:
       - checkout
       # - attach_workspace:
       #     at: ~/
-      - run: npm audit
+      - run: |
+          npm audit fix
+          npm audit
 
 workflows:
   covid-19-ci:
