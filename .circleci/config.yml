@@ -8,6 +8,15 @@ commands:
     description: "Install dependencies"
     steps:
       - run: npm install
+  destroy_fail:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - run:
+          name: Delte what was just deployed
+          command: |
+            aws cloudformation delete-stack \
+            --stack-name ciDeploy
 orbs:
   node: circleci/node@3.0.0
 jobs:
@@ -82,8 +91,9 @@ jobs:
     steps:
       - run: apk add --update curl
       - run:
+          name: simulate failure
           command: |
-            URL="https://ebow.me/"
+            URL="https://001ebow.me/"
             if curl -s --head ${URL}
             then
               echo "Portfolio exists!"
@@ -109,3 +119,5 @@ workflows:
       #       branches:
       #         only: master
       - smoke-test
+      - destroy_fail:
+          when: on_fail
