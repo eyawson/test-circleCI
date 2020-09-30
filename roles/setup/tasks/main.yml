@@ -31,11 +31,14 @@
 
 - name: Creates directory
   file:
-    path: ~/build
+    path: ~/web
     state: directory
 
-- name: Copy directory to folder
+- name: Copy index test page
   template:
-    src: "~/build"
-    dest: "~/"
-    force: yes
+    src: "files/index.js"
+    dest: "~/web/index.js"
+
+- name: Executing node
+  shell: |
+    pm2 start ~/web/index.js -f
