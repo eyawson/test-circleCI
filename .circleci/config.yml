@@ -75,7 +75,7 @@ jobs:
           name: run ansible playbook
           command: |
             # echo "host_key_checking = False" >> /etc/ansible/ansible.cfg
-            ansible-playbook main-remote.yml -i inventory --ssh-common-args='-o StrictHostKeyChecking=no'
+            ansible-playbook main-remote.yml -i inventory
 
 workflows:
   build-deploy:
