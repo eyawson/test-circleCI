@@ -48,7 +48,7 @@ jobs:
       - run:
           name: Create cloudformation stack
           command: |
-            aws cloudformation deploy --stack-name ciDeploy --template-file template.yml --region us-west-2
+            aws cloudformation deploy --stack-name ciDeploy --template-file template.yml
 workflows:
   build-deploy:
     jobs:
@@ -58,6 +58,8 @@ workflows:
       # - analyze:
       #     requires: [test]
       - deploy:
+          context:
+            - AWS
           filters:
             branches:
               only: master
