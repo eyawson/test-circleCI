@@ -74,16 +74,15 @@ jobs:
       - run:
           name: run ansible playbook
           command: |
+            ANSIBLE_HOST_KEY_CHECKING=false
             ansible-playbook main-remote.yml -i inventory
 
 workflows:
   build-deploy:
     jobs:
       - build
-      - test:
-          requires: [build]
-      - analyze:
-          requires: [test]
+      - test
+      - analyze
       # - create-infra:
       #     context:
       #       - AWS
@@ -91,7 +90,7 @@ workflows:
       #       branches:
       #         only: master
       - deploy:
-          requires: [analyze]
+          requires: [build]
           filters:
             branches:
               only: master
