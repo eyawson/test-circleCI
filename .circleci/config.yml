@@ -37,10 +37,8 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-
       - run_yarn_install
-      - run: |
-          npm audit
+      - print_pipeline_id
 
   deploy:
     docker:
