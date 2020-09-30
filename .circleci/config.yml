@@ -23,18 +23,13 @@ jobs:
             npm run lint
             npm build
       - print_pipeline_id
-      # - run: yarn build > ~/
-      # - persist_to_workspace:
-      #     root: ~/
-      #     paths:
-      #       - build
+
   test:
     docker:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      # - attach_workspace:
-      #     at: ~/
+
       - run_yarn_install
       - run: npm run test
   analyze:
@@ -42,18 +37,29 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      # - attach_workspace:
-      #     at: ~/
+
       - run_yarn_install
       - run: |
-          npm audit fix
           npm audit
 
+  deploy:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Create cloudformation stack
+          command: aws cloudformation create-stack --stack-name ciDeploy --template-body template.yml --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --region=us-west-2
 workflows:
-  covid-19-ci:
+  build-deploy:
     jobs:
       - build
       - test:
           requires: [build]
       - analyze:
           requires: [test]
+      - deploy:
+          requires: [analyze]
+          filters:
+            branches:
+              only: master
