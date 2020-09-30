@@ -76,6 +76,20 @@ jobs:
           command: |
             ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook main-remote.yml -i inventory
+  smoke-test:
+    docker:
+      - image: alpine:latest
+    steps:
+      - run: apk add --update curl
+      - run:
+          command: |
+            URL="https://ebow.me/"
+            if curl -s --head ${URL}
+            then
+              echo "Portfolio exists!"
+            else
+              echo "Bummer start over!"
+            fi
 
 workflows:
   build-deploy:
@@ -89,8 +103,9 @@ workflows:
       #     filters:
       #       branches:
       #         only: master
-      - deploy:
-          # requires: [build]
-          filters:
-            branches:
-              only: master
+      # - deploy:
+      #     # requires: [build]
+      #     filters:
+      #       branches:
+      #         only: master
+      - smoke-test
