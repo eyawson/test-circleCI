@@ -55,13 +55,14 @@ jobs:
       - run:
           name: Create cloudformation stack
           command: |
-            aws cloudformation deploy --stack-name ciDeploy --template-file template.yml
+            # aws cloudformation deploy --stack-name ciDeploy --template-file template.yml
             exit 1
       - run:
           name: Delete what was just deployed
           command: |
             aws cloudformation delete-stack \
             --stack-name ciDeploy
+          when: on_fail
 
   deploy:
     docker:
