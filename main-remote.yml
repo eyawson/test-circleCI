@@ -1,0 +1,6 @@
+---
+- name: Set up ec2 web server
+  hosts: all
+  user: ec2-user
+  roles:
+    - setup

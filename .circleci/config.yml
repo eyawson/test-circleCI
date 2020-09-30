@@ -40,7 +40,7 @@ jobs:
       - run_yarn_install
       - print_pipeline_id
 
-  deploy:
+  create-infra:
     docker:
       - image: amazon/aws-cli
     steps:
@@ -49,17 +49,46 @@ jobs:
           name: Create cloudformation stack
           command: |
             aws cloudformation deploy --stack-name ciDeploy --template-file template.yml
+  deploy:
+    docker:
+      - image: python/3.8.6-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["7c:83:b4:97:06:60:d4:d6:5d:af:c3:e5:4d:68:a0:b6"]
+      - run:
+          name: Install ansible dependencies
+          command: |
+            npm build
+            # apt install software-properties-common
+            # apt-add-repository --yes --update ppa:ansible/ansible
+            # apt install ansible
+            apk add --update ansible
+      - run:
+          name: add ec2 instance IP to inventory
+          command: |
+            echo "[all]" > inventory
+            aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --output text >> inventory
+      - run:
+          name: run ansible playbook
+          command: |
+            ansible-playbook main-remote.yml -i inventory
+
 workflows:
   build-deploy:
     jobs:
-      # - build
-      # - test:
-      #     requires: [build]
-      # - analyze:
-      #     requires: [test]
-      - deploy:
+      - build
+      - test:
+          requires: [build]
+      - analyze:
+          requires: [test]
+      - create-infra:
           context:
             - AWS
           filters:
             branches:
               only: master
+      - deploy:
+          requires: [analyze]
