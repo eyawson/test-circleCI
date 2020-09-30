@@ -47,7 +47,11 @@ jobs:
       - checkout
       - run:
           name: Create cloudformation stack
-          command: aws cloudformation create-stack --stack-name ciDeploy --template-body template.yml --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --region=us-west-2
+          command: |
+            aws configure --profile ${AWS_PROFILE} set aws_access_key_id ${AWS_ACCESS_KEY_ID}
+            aws configure --profile ${AWS_PROFILE} set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
+            aws configure --profile ${AWS_PROFILE} set region ${AWS_DEFAULT_REGION}
+            aws cloudformation create-stack --stack-name ciDeploy --template-body template.yml --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --region=us-west-2
 workflows:
   build-deploy:
     jobs:
@@ -57,7 +61,6 @@ workflows:
       - analyze:
           requires: [test]
       - deploy:
-          requires: [analyze]
           filters:
             branches:
               only: master
