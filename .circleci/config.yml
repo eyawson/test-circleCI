@@ -48,7 +48,7 @@ jobs:
       - run:
           name: Create cloudformation stack
           command: |
-            aws cloudformation deploy --stack-name ciDeploy --template-file ~/template.yml
+            aws cloudformation deploy --stack-name ciDeploy --template-file template.yml
 workflows:
   build-deploy:
     jobs:
